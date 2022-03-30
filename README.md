@@ -15,7 +15,7 @@
 
 
 
-### Collaboratores
+### Collaborators
  - André Flores - up201907001@up.pt
  - Diogo Faria - up201907014@up.pt
  - Tiago Rodrigues - up201906807@up.pt
