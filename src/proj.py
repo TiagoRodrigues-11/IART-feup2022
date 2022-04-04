@@ -1,5 +1,8 @@
 import random
 
+
+# INICIO DE ALGORITMOS # 
+
 # Falta refinar mas a base dos algoritmos estão aqui
 
 # Depth-First Search
@@ -43,8 +46,8 @@ def bfs(initial_state, process_items, final_items):
     
     return -1
 
-
-# OPERADORES #
+# FIM DE ALGORITMOS #
+# INICIO DE OPERADORES #
 
 def down(Pos, Board):
     if not (Pos[0] < len(Board)-1): return None
@@ -106,6 +109,37 @@ def rightL(Pos, Board, LVisit):
     Board[Pos[0]][Pos[1]] = 1
     return Pos
 
+# FIM DE OPERADORES
+
+# INICIO DAS FUNÇÕES AUXILIARES # 
+# operationsMaze -> Determina novos estados a partir do estado atual e operadores dados
+def operationsMaze(state):
+    operators = [down, downL, up, upL, left, leftL, right, rightL]
+    q_res = []
+    for op in operators:
+        (accept, res) = op(state[0])
+        if(accept and res not in q_res):
+            q_res.append((res, state[1] + [state[0]]))
+
+    return q_res
+
+# finalBoard
+
+def finalBoard(Pos, Board):
+    if Pos[0] == 0 and Pos[1] == len(Board[0]) - 1: return True
+    return False
+
+def print_board(board):
+    for row in board: 
+        for piece in row:
+            print(piece, end = " ")
+        print()
+
+def manhattan_distance(Pos1, Pos2):
+    return abs(Pos1[0] - Pos2[0]) + abs(Pos1[1], Pos2[1])
+
+# FIM DAS FUNÇÕES AUXILIARES
+
 def initialize_board(Size):
     board = []
     for i in range(Size):
@@ -115,22 +149,10 @@ def initialize_board(Size):
         board.append(row)
     return board
 
-def print_board(board):
-    for row in board: 
-        for piece in row:
-            print(piece, end = " ")
-        print()
-
-
-def manhattan_distance(Pos1, Pos2):
-    return abs(Pos1[0] - Pos2[0]) + abs(Pos1[1], Pos2[1])
-
 
 if __name__ == "__main__":
     Board = initialize_board(5)
-    LVisit = [2, 3, 4]
-    pos = (2, 2)
-    print(rightL(pos, Board, LVisit))
-    print(pos)
-    print(LVisit)
-    print_board(Board)
+    Pos1 = (0, 0)
+    Pos2 = (0 ,4)
+    print(finalBoard(Pos1, Board))
+    print(finalBoard(Pos2, Board))
