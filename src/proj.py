@@ -44,6 +44,67 @@ def bfs(initial_state, process_items, final_items):
     return -1
 
 
+# OPERADORES #
+
+def down(Pos, Board):
+    if not (Pos[0] < len(Board)-1): return None
+    if not (Board[Pos[0] + 1][Pos[1]] == 0): return None
+    Pos = (Pos[0] + 1, Pos[1])
+    Board[Pos[0]][Pos[1]] = 1
+    return Pos
+
+def downL(Pos, Board, LVisit):
+    if not (Pos[0] < len(Board)-1): return None
+    if not (Board[Pos[0] + 1][Pos[1]] in LVisit): return None
+    Pos = (Pos[0] + 1, Pos[1])   
+    LVisit.remove(Board[Pos[0]][Pos[1]])
+    Board[Pos[0]][Pos[1]] = 1
+    return Pos
+
+def up(Pos, Board):
+    if not (Pos[0] > 0): return None
+    if not (Board[Pos[0] - 1][Pos[1]] == 0): return None
+    Pos = (Pos[0] - 1, Pos[1])
+    Board[Pos[0]][Pos[1]] = 1
+    return Pos
+
+def upL(Pos, Board, LVisit):
+    if not (Pos[0] > 0): return None
+    if not (Board[Pos[0] - 1][Pos[1]] in LVisit): return None
+    Pos = (Pos[0] - 1, Pos[1])
+    LVisit.remove(Board[Pos[0]][Pos[1]])
+    Board[Pos[0]][Pos[1]] = 1
+    return Pos
+
+def left(Pos, Board):
+    if not (Pos[1] > 0): return None
+    if not (Board[Pos[0]][Pos[1]-1] == 0): return None
+    Pos = (Pos[0], Pos[1]-1)
+    Board[Pos[0]][Pos[1]] = 1
+    return Pos
+
+def leftL(Pos, Board, LVisit):
+    if not (Pos[1] > 0): return None
+    if not (Board[Pos[0]][Pos[1]-1] in LVisit): return None
+    Pos = (Pos[0], Pos[1]-1)
+    LVisit.remove(Board[Pos[0]][Pos[1]])
+    Board[Pos[0]][Pos[1]] = 1
+    return Pos
+
+def right(Pos, Board):
+    if not (Pos[1] > 0): return None
+    if not (Board[Pos[0]][Pos[1]+1] == 0): return None
+    Pos = (Pos[0], Pos[1]+1)
+    Board[Pos[0]][Pos[1]] = 1
+    return Pos
+
+def rightL(Pos, Board, LVisit):
+    if not (Pos[1] < len(Board[0]) - 1): return None
+    if not (Board[Pos[0]][Pos[1]+1] in LVisit): return None
+    Pos = (Pos[0], Pos[1]+1)
+    LVisit.remove(Board[Pos[0]][Pos[1]])
+    Board[Pos[0]][Pos[1]] = 1
+    return Pos
 
 def initialize_board(Size):
     board = []
@@ -69,7 +130,7 @@ if __name__ == "__main__":
     Board = initialize_board(5)
     LVisit = [2, 3, 4]
     pos = (2, 2)
-    print(downL(pos, Board, LVisit))
+    print(rightL(pos, Board, LVisit))
     print(pos)
     print(LVisit)
     print_board(Board)
