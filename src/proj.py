@@ -1,134 +1,218 @@
+import queue
 import random
+import copy
+import json
 
-
-# INICIO DE ALGORITMOS # 
-
-# Falta refinar mas a base dos algoritmos estão aqui
-
-# Depth-First Search
-# initial_state = (Estado Atual = pos, path até ao estado atual)
-# process_items = função que da todos os novos estados depois de usar operadores
-# final_items = função da check se chegou no final
-def dfs(initial_state, process_items, final_items):
-    stack = [initial_state]
-    visited_items = []
-
-    while len(stack) > 0:
-
-        state = stack.pop()
-        if state[0] not in visited_items:
-            visited_items.append(state[0])
-            new_items = process_items(state)
-            for i in new_items:
-                if final_items(i[0]):
-                    return i
-                stack.append(i)
-    return -1
-
-
-
-# Breadth-First Search
-def bfs(initial_state, process_items, final_items):
-    queue = [initial_state]
-
-    existing_items = [initial_state] # Performance purposes
-    while len(queue):
-        temp_state = queue.pop(0)
-
-        new_items = process_items(temp_state)
-
-        for item in new_items:
-            if item not in existing_items: 
-                queue.append(item)
-                existing_items.append(item)
-            if final_items(item[0]):
-                return item
-    
-    return -1
-
-# FIM DE ALGORITMOS #
 # INICIO DE OPERADORES #
 
-def down(Pos, Board):
-    if not (Pos[0] < len(Board)-1): return None
-    if not (Board[Pos[0] + 1][Pos[1]] == 0): return None
-    Pos = (Pos[0] + 1, Pos[1])
-    Board[Pos[0]][Pos[1]] = 1
-    return Pos
+def down(state):
+    # Pre Condition
+    if not (state.pos[0] < len(state.board)-1): return None
+    if not (state.board[state.pos[0] + 1][state.pos[1]] == 0): return None
+    
+    # Create and Return New State
+    newState = copy.deepcopy(state)
+    newState.pos = (newState.pos[0] + 1, newState.pos[1])
+    newState.board[newState.pos[0]][newState.pos[1]] = 1
 
-def downL(Pos, Board, LVisit):
-    if not (Pos[0] < len(Board)-1): return None
-    if not (Board[Pos[0] + 1][Pos[1]] in LVisit): return None
-    Pos = (Pos[0] + 1, Pos[1])   
-    LVisit.remove(Board[Pos[0]][Pos[1]])
-    Board[Pos[0]][Pos[1]] = 1
-    return Pos
+    return newState
 
-def up(Pos, Board):
-    if not (Pos[0] > 0): return None
-    if not (Board[Pos[0] - 1][Pos[1]] == 0): return None
-    Pos = (Pos[0] - 1, Pos[1])
-    Board[Pos[0]][Pos[1]] = 1
-    return Pos
+def downL(state):
+    # Pre Conditions
+    if not (state.pos[0] < len(state.board)-1): return None
+    if not (state.board[state.pos[0] + 1][state.pos[1]] in state.lVisit): return None
 
-def upL(Pos, Board, LVisit):
-    if not (Pos[0] > 0): return None
-    if not (Board[Pos[0] - 1][Pos[1]] in LVisit): return None
-    Pos = (Pos[0] - 1, Pos[1])
-    LVisit.remove(Board[Pos[0]][Pos[1]])
-    Board[Pos[0]][Pos[1]] = 1
-    return Pos
+    # Create and Return New State
+    newState = copy.deepcopy(state)
+    newState.pos = (newState.pos[0] + 1, newState.pos[1])
+    newState.lVisit.remove(newState.board[newState.pos[0]][newState.pos[1]])
+    newState.board[newState.pos[0]][newState.pos[1]] = 1
+   
+    return newState
 
-def left(Pos, Board):
-    if not (Pos[1] > 0): return None
-    if not (Board[Pos[0]][Pos[1]-1] == 0): return None
-    Pos = (Pos[0], Pos[1]-1)
-    Board[Pos[0]][Pos[1]] = 1
-    return Pos
+def up(state):
+    # Pre Conditions
+    if not (state.pos[0] > 0): return None
+    if not (state.board[state.pos[0] - 1][state.pos[1]] == 0): return None
 
-def leftL(Pos, Board, LVisit):
-    if not (Pos[1] > 0): return None
-    if not (Board[Pos[0]][Pos[1]-1] in LVisit): return None
-    Pos = (Pos[0], Pos[1]-1)
-    LVisit.remove(Board[Pos[0]][Pos[1]])
-    Board[Pos[0]][Pos[1]] = 1
-    return Pos
+    # Create and Return New State
+    newState = copy.deepcopy(state)
+    newState.pos = (newState.pos[0] - 1, newState.pos[1])
+    newState.board[newState.pos[0]][newState.pos[1]] = 1
 
-def right(Pos, Board):
-    if not (Pos[1] > 0): return None
-    if not (Board[Pos[0]][Pos[1]+1] == 0): return None
-    Pos = (Pos[0], Pos[1]+1)
-    Board[Pos[0]][Pos[1]] = 1
-    return Pos
+    return newState
+    
+    
+def upL(state):
+    # Pre Conditions
+    if not (state.pos[0] > 0): return None
+    if not (state.board[state.pos[0] - 1][state.pos[1]] in state.lVisit): return None
 
-def rightL(Pos, Board, LVisit):
-    if not (Pos[1] < len(Board[0]) - 1): return None
-    if not (Board[Pos[0]][Pos[1]+1] in LVisit): return None
-    Pos = (Pos[0], Pos[1]+1)
-    LVisit.remove(Board[Pos[0]][Pos[1]])
-    Board[Pos[0]][Pos[1]] = 1
-    return Pos
+    # Create and Return New State
+    newState = copy.deepcopy(state)
+    newState.pos = (newState.pos[0] - 1, newState.pos[1])
+    state.lVisit.remove(newState.board[newState.pos[0]][newState.pos[1]])
+    newState.board[newState.pos[0]][newState.pos[1]] = 1
+
+    return newState
+
+def left(state):
+    # Pre Conditions
+    if not (state.pos[1] > 0): return None
+    if not (state.board[state.pos[0]][state.pos[1]-1] == 0): return None
+
+    # Create and Return New State
+    newState = copy.deepcopy(state)
+    newState.pos = (newState.pos[0], newState.pos[1] - 1)
+    newState.board[newState.pos[0]][newState.pos[1]] = 1
+    
+    return newState
+
+def leftL(state):
+    # Pre Conditions
+    if not (state.pos[1] > 0): return None
+    if not (state.board[state.pos[0]][state.pos[1]-1] in state.lVisit): return None
+
+    # Create and Return New State
+    newState = copy.deepcopy(state)
+    newState.pos = (newState.pos[0], newState.pos[1] - 1)
+    state.lVisit.remove(newState.board[newState.pos[0]][newState.pos[1]])
+    newState.board[newState.pos[0]][newState.pos[1]] = 1
+    
+    return newState
+
+def right(state):
+    # Pre Conditions
+    if not (state.pos[1] < len(state.board[0]) - 1): return None
+    if not (state.board[state.pos[0]][state.pos[1]+1] == 0): return None
+
+    # Create and Return New State
+    newState = copy.deepcopy(state)
+    newState.pos = (newState.pos[0], newState.pos[1] + 1)
+    newState.board[newState.pos[0]][newState.pos[1]] = 1
+    
+    return newState
+
+def rightL(state):
+    # Pre Conditions
+    if not (state.pos[1] < len(state.board[0]) - 1): return None
+    if not (state.board[state.pos[0]][state.pos[1]+1] in state.lVisit): return None
+
+    # Create and Return New State
+    newState = copy.deepcopy(state)
+    newState.pos = (newState.pos[0], newState.pos[1] + 1)
+    newState.lVisit.remove(newState.board[newState.pos[0]][newState.pos[1]])
+    newState.board[newState.pos[0]][newState.pos[1]] = 1
+    
+    return newState
 
 # FIM DE OPERADORES
+# INICIO DA CLASS NODE
+
+class State:
+    def __init__(self, board, pos, lVisit):
+        self.board = board              # Array de Array
+        self.pos = pos                  # Tuple
+        self.lVisit = lVisit            # Lista
+
+class Node:
+    def __init__(self, state, parent = None):
+        self.state = state
+        self.parent = parent
+    
+    # operationsMaze -> Determina novos estados a partir do estado atual e operadores dados
+    def operationsMaze(self):
+        operators = [down, downL, up, upL, left, leftL, right, rightL]
+        q_res = []
+        for op in operators:
+            new_state = op(self.state)
+            if((new_state not in q_res) and (new_state != None)):
+                q_res.append(Node(new_state, self))
+
+        return q_res
+
+    def getPath(self):
+        path = [self.state.pos]
+        curr_node = self
+
+        while(curr_node.parent != None):
+            curr_node = curr_node.parent
+            path.append(curr_node.state.pos)
+        
+        path.reverse()
+        return path
+    
+
+# FIM DA CLASS NODE
+# INICIO DE ALGORITMOS # 
+
+
+# Depth-First Search
+def dfs(initial_state):
+    initial_node = Node(initial_state)
+    stack = [initial_node]
+    visited_nodes = []
+
+    while len(stack) > 0:
+        curr_node = stack.pop()
+        print(curr_node.state.lVisit, end="\t")
+        print(curr_node.state.pos)
+        if curr_node not in visited_nodes:
+            visited_nodes.append(curr_node)
+
+            if(solution(curr_node)):
+                print(curr_node.state.pos)
+                print(curr_node.state.lVisit)
+                print_board(curr_node.state.board)
+                return curr_node.getPath()
+
+            new_nodes = curr_node.operationsMaze()
+            for node in new_nodes:
+                stack.append(node)
+    
+    return []
+
+# Breadth-First Search
+def bfs(initial_state):
+    initial_node = Node(initial_state)
+    queue = [initial_node]
+    visited_nodes = [] # Performance purposes
+    
+    while len(queue):
+        curr_node = queue.pop(0)
+        visited_nodes.append(curr_node)
+        
+        if(solution(curr_node)):
+            return curr_node.getPath()
+
+        new_nodes = curr_node.operationsMaze()
+        for node in new_nodes:
+            if node not in new_nodes:
+                queue.append(node)
+    
+    return []
+
+# FIM DE ALGORITMOS #
+
 
 # INICIO DAS FUNÇÕES AUXILIARES # 
-# operationsMaze -> Determina novos estados a partir do estado atual e operadores dados
-def operationsMaze(state):
-    operators = [down, downL, up, upL, left, leftL, right, rightL]
-    q_res = []
-    for op in operators:
-        (accept, res) = op(state[0])
-        if(accept and res not in q_res):
-            q_res.append((res, state[1] + [state[0]]))
 
-    return q_res
+def solution(node):
+    state = node.state
+    if(len(state.lVisit) > 0): return False
+    print("1")
+    if(state.board[0][len(state.board) - 1] != 1): return False
+    print("2")
+    if(state.pos[0] != 0 and state.pos[1] != (len(state.board) - 1)): return False
+    print("3")
+    return True
 
 # finalBoard
-
-def finalBoard(Pos, Board):
-    if Pos[0] == 0 and Pos[1] == len(Board[0]) - 1: return True
+def finalBoard(state):
+    if state.pos[0] == 0 and state.pos[1] == len(state.board[0]) - 1: return True
     return False
 
+# Prints the 'board' provided
 def print_board(board):
     for row in board: 
         for piece in row:
@@ -138,21 +222,38 @@ def print_board(board):
 def manhattan_distance(Pos1, Pos2):
     return abs(Pos1[0] - Pos2[0]) + abs(Pos1[1], Pos2[1])
 
+def cost():
+    return -1
+
+def heuristic():
+    return -1
+
+
 # FIM DAS FUNÇÕES AUXILIARES
 
-def initialize_board(Size):
-    board = []
-    for i in range(Size):
-        row = []
-        for j in range(Size):
-            row.append(2)
-        board.append(row)
-    return board
-
+def initialize_board(board):
+    Pos = ()
+    LVisit = set()
+    for i in range(len(board)):
+        for j in range(len(board[i])):
+            if board[i][j] == 1:
+                Pos = (i, j)
+            elif not (board[i][j] == 0) and not (board[i][j] in LVisit):
+                LVisit.add(board[i][j])
+    state = State(board, Pos, LVisit)
+    return state
+    
 
 if __name__ == "__main__":
-    Board = initialize_board(5)
-    Pos1 = (0, 0)
-    Pos2 = (0 ,4)
-    print(finalBoard(Pos1, Board))
-    print(finalBoard(Pos2, Board))
+
+    f = open('./boards.json')
+    boards = json.load(f)
+    f.close()
+
+
+    state = initialize_board(boards[0])
+    print("init:", end=" ")
+    print(state.lVisit)
+    path = dfs(state)
+    print(path)
+    
