@@ -51,7 +51,6 @@ def bfs(initial_state, process_items, final_items):
 
 def down(Pos, Board):
     if not (Pos[0] < len(Board)-1): return None
-    if Board[Pos[0] + 1][Pos[1]] == 1: return None
     if not (Board[Pos[0] + 1][Pos[1]] == 0): return None
     Pos = (Pos[0] + 1, Pos[1])
     Board[Pos[0]][Pos[1]] = 1
@@ -59,7 +58,6 @@ def down(Pos, Board):
 
 def downL(Pos, Board, LVisit):
     if not (Pos[0] < len(Board)-1): return None
-    if Board[Pos[0] + 1][Pos[1]] == 1: return None
     if not (Board[Pos[0] + 1][Pos[1]] in LVisit): return None
     Pos = (Pos[0] + 1, Pos[1])   
     LVisit.remove(Board[Pos[0]][Pos[1]])
@@ -68,7 +66,6 @@ def downL(Pos, Board, LVisit):
 
 def up(Pos, Board):
     if not (Pos[0] > 0): return None
-    if Board[Pos[0] - 1][Pos[1]] == 1: return None
     if not (Board[Pos[0] - 1][Pos[1]] == 0): return None
     Pos = (Pos[0] - 1, Pos[1])
     Board[Pos[0]][Pos[1]] = 1
@@ -76,7 +73,6 @@ def up(Pos, Board):
 
 def upL(Pos, Board, LVisit):
     if not (Pos[0] > 0): return None
-    if Board[Pos[0] - 1][Pos[1]] == 1: return None
     if not (Board[Pos[0] - 1][Pos[1]] in LVisit): return None
     Pos = (Pos[0] - 1, Pos[1])
     LVisit.remove(Board[Pos[0]][Pos[1]])
@@ -85,7 +81,6 @@ def upL(Pos, Board, LVisit):
 
 def left(Pos, Board):
     if not (Pos[1] > 0): return None
-    if Board[Pos[0]][Pos[1]-1] == 1: return None
     if not (Board[Pos[0]][Pos[1]-1] == 0): return None
     Pos = (Pos[0], Pos[1]-1)
     Board[Pos[0]][Pos[1]] = 1
@@ -93,7 +88,6 @@ def left(Pos, Board):
 
 def leftL(Pos, Board, LVisit):
     if not (Pos[1] > 0): return None
-    if Board[Pos[0]][Pos[1]-1] == 1: return None
     if not (Board[Pos[0]][Pos[1]-1] in LVisit): return None
     Pos = (Pos[0], Pos[1]-1)
     LVisit.remove(Board[Pos[0]][Pos[1]])
@@ -102,7 +96,6 @@ def leftL(Pos, Board, LVisit):
 
 def right(Pos, Board):
     if not (Pos[1] > 0): return None
-    if Board[Pos[0]][Pos[1]+1] == 1: return None
     if not (Board[Pos[0]][Pos[1]+1] == 0): return None
     Pos = (Pos[0], Pos[1]+1)
     Board[Pos[0]][Pos[1]] = 1
@@ -110,7 +103,6 @@ def right(Pos, Board):
 
 def rightL(Pos, Board, LVisit):
     if not (Pos[1] < len(Board[0]) - 1): return None
-    if Board[Pos[0]][Pos[1]+1] == 1: return None
     if not (Board[Pos[0]][Pos[1]+1] in LVisit): return None
     Pos = (Pos[0], Pos[1]+1)
     LVisit.remove(Board[Pos[0]][Pos[1]])
