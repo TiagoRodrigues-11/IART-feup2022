@@ -25,8 +25,6 @@ def downL(state):
     # Create and Return New State
     newState = copy.deepcopy(state)
     newState.pos = (newState.pos[0] + 1, newState.pos[1])
-    #print("downL - To remove: ", end = " ")
-    #print(newState.board[newState.pos[0]][newState.pos[1]])
     newState.lVisit.remove(newState.board[newState.pos[0]][newState.pos[1]])
     newState.board[newState.pos[0]][newState.pos[1]] = 1
    
@@ -53,8 +51,6 @@ def upL(state):
     # Create and Return New State
     newState = copy.deepcopy(state)
     newState.pos = (newState.pos[0] - 1, newState.pos[1])
-    #print("upL - To remove: ", end = " ")
-    #print(newState.board[newState.pos[0]][newState.pos[1]])
     newState.lVisit.remove(newState.board[newState.pos[0]][newState.pos[1]])
     newState.board[newState.pos[0]][newState.pos[1]] = 1
 
@@ -80,9 +76,6 @@ def leftL(state):
     # Create and Return New State
     newState = copy.deepcopy(state)
     newState.pos = (newState.pos[0], newState.pos[1] - 1)
-    
-    #print("leftL - To remove: ", end = " ")
-    #print(newState.board[newState.pos[0]][newState.pos[1]])
     newState.lVisit.remove(newState.board[newState.pos[0]][newState.pos[1]])
     newState.board[newState.pos[0]][newState.pos[1]] = 1
     
@@ -108,8 +101,6 @@ def rightL(state):
     # Create and Return New State
     newState = copy.deepcopy(state)
     newState.pos = (newState.pos[0], newState.pos[1] + 1)
-    #print("rightL - To remove: ", end = " ")
-    #print(newState.board[newState.pos[0]][newState.pos[1]])
     newState.lVisit.remove(newState.board[newState.pos[0]][newState.pos[1]])
     newState.board[newState.pos[0]][newState.pos[1]] = 1
     
@@ -202,6 +193,8 @@ def bfs(initial_state):
                 queue.append(node)
     
     return []
+
+
 
 # FIM DE ALGORITMOS #
 
