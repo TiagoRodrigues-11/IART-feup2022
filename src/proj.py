@@ -25,6 +25,8 @@ def downL(state):
     # Create and Return New State
     newState = copy.deepcopy(state)
     newState.pos = (newState.pos[0] + 1, newState.pos[1])
+    #print("downL - To remove: ", end = " ")
+    #print(newState.board[newState.pos[0]][newState.pos[1]])
     newState.lVisit.remove(newState.board[newState.pos[0]][newState.pos[1]])
     newState.board[newState.pos[0]][newState.pos[1]] = 1
    
@@ -51,7 +53,9 @@ def upL(state):
     # Create and Return New State
     newState = copy.deepcopy(state)
     newState.pos = (newState.pos[0] - 1, newState.pos[1])
-    state.lVisit.remove(newState.board[newState.pos[0]][newState.pos[1]])
+    #print("upL - To remove: ", end = " ")
+    #print(newState.board[newState.pos[0]][newState.pos[1]])
+    newState.lVisit.remove(newState.board[newState.pos[0]][newState.pos[1]])
     newState.board[newState.pos[0]][newState.pos[1]] = 1
 
     return newState
@@ -76,7 +80,10 @@ def leftL(state):
     # Create and Return New State
     newState = copy.deepcopy(state)
     newState.pos = (newState.pos[0], newState.pos[1] - 1)
-    state.lVisit.remove(newState.board[newState.pos[0]][newState.pos[1]])
+    
+    #print("leftL - To remove: ", end = " ")
+    #print(newState.board[newState.pos[0]][newState.pos[1]])
+    newState.lVisit.remove(newState.board[newState.pos[0]][newState.pos[1]])
     newState.board[newState.pos[0]][newState.pos[1]] = 1
     
     return newState
@@ -101,6 +108,8 @@ def rightL(state):
     # Create and Return New State
     newState = copy.deepcopy(state)
     newState.pos = (newState.pos[0], newState.pos[1] + 1)
+    #print("rightL - To remove: ", end = " ")
+    #print(newState.board[newState.pos[0]][newState.pos[1]])
     newState.lVisit.remove(newState.board[newState.pos[0]][newState.pos[1]])
     newState.board[newState.pos[0]][newState.pos[1]] = 1
     
@@ -129,7 +138,7 @@ class Node:
             if((new_state not in q_res) and (new_state != None)):
                 q_res.append(Node(new_state, self))
 
-        return q_res
+        return q_res[::-1]
 
     def getPath(self):
         path = [self.state.pos]
@@ -146,7 +155,7 @@ class Node:
 # FIM DA CLASS NODE
 # INICIO DE ALGORITMOS # 
 
-
+# Probably wrong
 # Depth-First Search
 def dfs(initial_state):
     initial_node = Node(initial_state)
@@ -155,8 +164,7 @@ def dfs(initial_state):
 
     while len(stack) > 0:
         curr_node = stack.pop()
-        print(curr_node.state.lVisit, end="\t")
-        print(curr_node.state.pos)
+
         if curr_node not in visited_nodes:
             visited_nodes.append(curr_node)
 
@@ -183,11 +191,14 @@ def bfs(initial_state):
         visited_nodes.append(curr_node)
         
         if(solution(curr_node)):
+            print(curr_node.state.pos)
+            print(curr_node.state.lVisit)
+            print_board(curr_node.state.board)
             return curr_node.getPath()
 
         new_nodes = curr_node.operationsMaze()
         for node in new_nodes:
-            if node not in new_nodes:
+            if node not in visited_nodes:
                 queue.append(node)
     
     return []
@@ -198,14 +209,14 @@ def bfs(initial_state):
 # INICIO DAS FUNÇÕES AUXILIARES # 
 
 def solution(node):
-    state = node.state
-    if(len(state.lVisit) > 0): return False
-    print("1")
-    if(state.board[0][len(state.board) - 1] != 1): return False
-    print("2")
-    if(state.pos[0] != 0 and state.pos[1] != (len(state.board) - 1)): return False
-    print("3")
-    return True
+    state = copy.deepcopy(node.state)
+    if(len(state.lVisit) == 0):
+        if(state.pos[0] == 0):
+            if(state.pos[1] == (len(state.board) - 1)):
+                if(state.board[state.pos[0]][state.pos[1]] == 1):
+                    return True
+    return False
+
 
 # finalBoard
 def finalBoard(state):
@@ -251,9 +262,9 @@ if __name__ == "__main__":
     f.close()
 
 
-    state = initialize_board(boards[0])
+    state = initialize_board(boards[-1])
     print("init:", end=" ")
     print(state.lVisit)
-    path = dfs(state)
+    path = bfs(state)
     print(path)
     
