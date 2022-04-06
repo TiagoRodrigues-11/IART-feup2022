@@ -1,3 +1,4 @@
+from mimetypes import init
 import queue
 import random
 import copy
@@ -194,7 +195,32 @@ def bfs(initial_state):
     
     return []
 
+def uniform(initialState):
+    initialNode = Node(initialState)
+    queue = [(initialNode, 0)]
+    visitedNodes = []
 
+
+    while len(queue):
+
+        queue.sort(key=lambda tup: tup[1])
+        (currNode, currCost) = queue.pop(0)
+
+ 
+
+        visitedNodes.append(currNode)
+        if solution(currNode):
+            print(currNode.state.pos)
+            print(currNode.state.lVisit)
+            print_board(currNode.state.board)
+            return currNode.getPath()
+        
+        newNodes = currNode.operationsMaze()
+        for node in newNodes:
+            if node not in visitedNodes:
+                queue.append((node, currCost + cost()))
+    
+    return []
 
 # FIM DE ALGORITMOS #
 
@@ -227,7 +253,7 @@ def manhattan_distance(Pos1, Pos2):
     return abs(Pos1[0] - Pos2[0]) + abs(Pos1[1], Pos2[1])
 
 def cost():
-    return -1
+    return 1
 
 def heuristic():
     return -1
@@ -258,6 +284,6 @@ if __name__ == "__main__":
     state = initialize_board(boards[-1])
     print("init:", end=" ")
     print(state.lVisit)
-    path = bfs(state)
+    path = uniform(state)
     print(path)
     
