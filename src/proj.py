@@ -1,7 +1,10 @@
+from mimetypes import init
 import queue
 import random
 import copy
 import json
+import time
+import sys
 
 # INICIO DE OPERADORES #
 
@@ -116,9 +119,10 @@ class State:
         self.lVisit = lVisit            # Lista
 
 class Node:
-    def __init__(self, state, parent = None):
+    def __init__(self, state, parent = None, depth=0):
         self.state = state
         self.parent = parent
+        self.depth = depth
     
     # operationsMaze -> Determina novos estados a partir do estado atual e operadores dados
     def operationsMaze(self):
@@ -148,7 +152,7 @@ class Node:
 
 # Probably wrong
 # Depth-First Search
-def dfs(initial_state):
+def dfs(initial_state, limit_depth = sys.maxsize):
     initial_node = Node(initial_state)
     stack = [initial_node]
     visited_nodes = []
@@ -165,9 +169,10 @@ def dfs(initial_state):
                 print_board(curr_node.state.board)
                 return curr_node.getPath()
 
-            new_nodes = curr_node.operationsMaze()
-            for node in new_nodes:
-                stack.append(node)
+            if(curr_node.depth <= limit_depth):
+                new_nodes = curr_node.operationsMaze()
+                for node in new_nodes:
+                    stack.append(node)
     
     return []
 
@@ -218,6 +223,44 @@ def greedy_search(initial_state, h):
 
     return []
 
+def uniform(initialState):
+    initialNode = Node(initialState)
+    queue = [(initialNode, 0)]
+    visitedNodes = []
+
+    while len(queue):
+
+        queue.sort(key=lambda tup: tup[1])
+        (currNode, currCost) = queue.pop(0)
+
+ 
+
+        visitedNodes.append(currNode)
+        if solution(currNode):
+            print(currNode.state.pos)
+            print(currNode.state.lVisit)
+            print_board(currNode.state.board)
+            return currNode.getPath()
+        
+        newNodes = currNode.operationsMaze()
+        for node in newNodes:
+            if node not in visitedNodes:
+                queue.append((node, currCost + cost()))
+    
+    return []
+
+# Iterative deepening
+def iterative_deepening(initial_state):
+    path = []
+    depth = 0
+    while(len(path) == 0):
+        path = dfs(initial_state, depth)
+        depth += 1
+    
+    print("Depth:", end=" ")
+    print(depth)
+    return path
+
 # FIM DE ALGORITMOS #
 
 # HEURISTIC FUNCTIONS
@@ -257,11 +300,54 @@ def manhattan_distance(Pos1, Pos2):
     return abs(Pos1[0] - Pos2[0]) + abs(Pos1[1] - Pos2[1])
 
 def cost():
-    return -1
+    return 1
 
-def heuristic():
-    return -1
+def compare_algorithms(initial_state):
+    #bfs
+    start = time.time()
+    bfs(initial_state)
+    end = time.time()
+    print("BFS:", end=" ")
+    print(end - start)
 
+    #dfs
+    start = time.time()
+    dfs(initial_state)
+    end = time.time()
+    print("DFS:", end=" ")
+    print(end - start)
+
+    #iterative_deepening
+    start = time.time()
+    iterative_deepening(initial_state)
+    end = time.time()
+    print("Iterative Deepening:", end=" ")
+    print(end - start)
+
+    #uniform cost
+    start = time.time()
+    #uniform(initial_state)
+    end = time.time()
+    print("Uniform Cost:", end=" ")
+    print(end - start)
+
+    '''
+    #greedy search
+    start = time.time()
+    bfs(initial_state)
+    end = time.time()
+    print("Greedy Search:", end=" ")
+    print(end - start)
+    '''
+
+    '''
+    #A*
+    start = time.time()
+    bfs(initial_state)
+    end = time.time()
+    print("A*:", end=" ")
+    print(end - start)
+    '''
 
 # FIM DAS FUNÇÕES AUXILIARES
 
