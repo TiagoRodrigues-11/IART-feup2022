@@ -194,10 +194,40 @@ def bfs(initial_state):
     
     return []
 
+def greedy_search(initial_state, h):
+    initial_node = Node(initial_state)
+    stack = [initial_node]
+    visited_nodes = []
 
+    while len(stack):
+        curr_node = stack.pop()
+
+        if curr_node not in visited_nodes:
+            visited_nodes.append(curr_node)
+
+            if(solution(curr_node)):
+                print(curr_node.state.pos)
+                print(curr_node.state.lVisit)
+                print_board(curr_node.state.board)
+                return curr_node.getPath()
+            
+            new_nodes = curr_node.operationsMaze()
+            new_nodes.sort(reverse=True, key=h)
+            for node in new_nodes:
+                stack.append(node)
+
+    return []
 
 # FIM DE ALGORITMOS #
 
+# HEURISTIC FUNCTIONS
+
+def h_1(node):
+    curr_pos = node.state.pos
+    target_pos = (0, len(node.state.board) - 1)
+    return manhattan_distance(curr_pos, target_pos)
+
+# END HEURISTIC FUNCTIONS
 
 # INICIO DAS FUNÇÕES AUXILIARES # 
 
@@ -224,7 +254,7 @@ def print_board(board):
         print()
 
 def manhattan_distance(Pos1, Pos2):
-    return abs(Pos1[0] - Pos2[0]) + abs(Pos1[1], Pos2[1])
+    return abs(Pos1[0] - Pos2[0]) + abs(Pos1[1] - Pos2[1])
 
 def cost():
     return -1
@@ -258,6 +288,6 @@ if __name__ == "__main__":
     state = initialize_board(boards[-1])
     print("init:", end=" ")
     print(state.lVisit)
-    path = bfs(state)
+    path = greedy_search(state, h_1)
     print(path)
     
