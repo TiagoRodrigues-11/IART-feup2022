@@ -2,6 +2,8 @@ import queue
 import random
 import copy
 import json
+import sys
+import time
 
 # INICIO DE OPERADORES #
 
@@ -116,9 +118,10 @@ class State:
         self.lVisit = lVisit            # Lista
 
 class Node:
-    def __init__(self, state, parent = None):
+    def __init__(self, state, parent = None, depth = 0):
         self.state = state
         self.parent = parent
+        self.depth = depth
     
     # operationsMaze -> Determina novos estados a partir do estado atual e operadores dados
     def operationsMaze(self):
@@ -127,7 +130,7 @@ class Node:
         for op in operators:
             new_state = op(self.state)
             if((new_state not in q_res) and (new_state != None)):
-                q_res.append(Node(new_state, self))
+                q_res.append(Node(new_state, self, self.depth + 1))
 
         return q_res[::-1]
 
@@ -148,7 +151,7 @@ class Node:
 
 # Probably wrong
 # Depth-First Search
-def dfs(initial_state):
+def dfs(initial_state, limit_depth = sys.maxsize):
     initial_node = Node(initial_state)
     stack = [initial_node]
     visited_nodes = []
@@ -165,9 +168,10 @@ def dfs(initial_state):
                 print_board(curr_node.state.board)
                 return curr_node.getPath()
 
-            new_nodes = curr_node.operationsMaze()
-            for node in new_nodes:
-                stack.append(node)
+            if(curr_node.depth <= limit_depth):
+                new_nodes = curr_node.operationsMaze()
+                for node in new_nodes:
+                    stack.append(node)
     
     return []
 
@@ -194,7 +198,18 @@ def bfs(initial_state):
     
     return []
 
-
+# Iterative deepening
+def iterative_deepening(initial_state):
+    path = []
+    depth = 0
+    while(len(path) == 0):
+        path = dfs(initial_state, depth)
+        depth += 1
+    
+    print("Depth:", end=" ")
+    print(depth)
+    return path
+    
 
 # FIM DE ALGORITMOS #
 
@@ -232,6 +247,53 @@ def cost():
 def heuristic():
     return -1
 
+def compare_algorithms(initial_state):
+    #bfs
+    start = time.time()
+    bfs(initial_state)
+    end = time.time()
+    print("BFS:", end=" ")
+    print(end - start)
+
+    #dfs
+    start = time.time()
+    dfs(initial_state)
+    end = time.time()
+    print("DFS:", end=" ")
+    print(end - start)
+
+    #iterative_deepening
+    start = time.time()
+    iterative_deepening(initial_state)
+    end = time.time()
+    print("Iterative Deepening:", end=" ")
+    print(end - start)
+
+    #uniform cost
+    start = time.time()
+    #uniform(initial_state)
+    end = time.time()
+    print("Uniform Cost:", end=" ")
+    print(end - start)
+
+    '''
+    #greedy search
+    start = time.time()
+    bfs(initial_state)
+    end = time.time()
+    print("Greedy Search:", end=" ")
+    print(end - start)
+    '''
+
+    '''
+    #A*
+    start = time.time()
+    bfs(initial_state)
+    end = time.time()
+    print("A*:", end=" ")
+    print(end - start)
+    '''
+
 
 # FIM DAS FUNÇÕES AUXILIARES
 
@@ -255,9 +317,9 @@ if __name__ == "__main__":
     f.close()
 
 
-    state = initialize_board(boards[-1])
+    state = initialize_board(boards[0])
     print("init:", end=" ")
     print(state.lVisit)
-    path = bfs(state)
+    path = iterative_deepening(state)
     print(path)
     
