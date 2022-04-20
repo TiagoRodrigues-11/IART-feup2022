@@ -138,23 +138,23 @@ class Node:
     # operationsMaze -> Determina novos estados a partir do estado atual e operadores dados
     def operationsMaze(node):
         operators = [down, downL, up, upL, left, leftL, right, rightL]
-        q_res = []
+        queueRes = []
         for op in operators:
-            new_state = op(node.state)
-            if(new_state != None):
-                new_node = Node(new_state, node, node.depth + 1)
-                if(new_node not in q_res):
-                    q_res.append(new_node)
+            newState = op(node.state)
+            if(newState != None):
+                newNode = Node(newState, node, node.depth + 1)
+                if(newNode not in queueRes):
+                    queueRes.append(newNode)
 
-        return q_res
+        return queueRes
 
     def getPath(self):
         path = [self.state.pos]
-        curr_node = self
+        currNode = self
 
-        while(curr_node.parent != None):
-            curr_node = curr_node.parent
-            path.append(curr_node.state.pos)
+        while(currNode.parent != None):
+            currNode = currNode.parent
+            path.append(currNode.state.pos)
         
         path.reverse()
         return path
@@ -164,80 +164,80 @@ class Node:
 
 # Probably wrong
 # Depth-First Search
-def dfs(initial_state, limit_depth = sys.maxsize):
-    initial_node = Node(initial_state)
-    stack = [initial_node]
-    visited_nodes = []
+def dfs(initialState, limitDepth = sys.maxsize):
+    initialNode = Node(initialState)
+    stack = [initialNode]
+    visitedNodes = []
 
     while len(stack) > 0:
-        curr_node = stack.pop()
+        currNode = stack.pop()
         
         visit = False
         # Iterative Deepening - Visit nodes already visited when they're further up in the tree
-        if(limit_depth != sys.maxsize):
-            equals = [x for x in visited_nodes if x == curr_node]
+        if(limitDepth != sys.maxsize):
+            equals = [x for x in visitedNodes if x == currNode]
             for node in equals:
-                if(node.depth < curr_node.depth):
+                if(node.depth < currNode.depth):
                     visit = True
 
-        if ((curr_node not in visited_nodes) or visit):
-            visited_nodes.append(curr_node)
+        if ((currNode not in visitedNodes) or visit):
+            visitedNodes.append(currNode)
 
-            if solution(curr_node):
-                print(curr_node.state.pos)
-                print(curr_node.state.lVisit)
-                print_board(curr_node.state.board)
-                return curr_node.getPath()
+            if solution(currNode):
+                print(currNode.state.pos)
+                print(currNode.state.lVisit)
+                printBoard(currNode.state.board)
+                return currNode.getPath()
 
-            if curr_node.depth <= limit_depth:
-                new_nodes = curr_node.operationsMaze()
-                for node in new_nodes[::-1]:
+            if currNode.depth <= limitDepth:
+                newNodes = currNode.operationsMaze()
+                for node in newNodes[::-1]:
                     stack.append(node)
     
     return []
 
 # Breadth-First Search
-def bfs(initial_state):
-    initial_node = Node(initial_state)
-    queue = [initial_node]
-    visited_nodes = [] # Performance purposes
+def bfs(initialState):
+    initialNode = Node(initialState)
+    queue = [initialNode]
+    visitedNodes = [] # Performance purposes
     
     while len(queue):
-        curr_node = queue.pop(0)
-        visited_nodes.append(curr_node)
+        currNode = queue.pop(0)
+        visitedNodes.append(currNode)
         
-        if solution(curr_node):
-            print(curr_node.state.pos)
-            print(curr_node.state.lVisit)
-            print_board(curr_node.state.board)
-            return curr_node.getPath()
+        if solution(currNode):
+            print(currNode.state.pos)
+            print(currNode.state.lVisit)
+            printBoard(currNode.state.board)
+            return currNode.getPath()
 
-        new_nodes = curr_node.operationsMaze()
-        for node in new_nodes:
-            if node not in visited_nodes:
+        newNodes = currNode.operationsMaze()
+        for node in newNodes:
+            if node not in visitedNodes:
                 queue.append(node)
     
     return []
 
-def greedy_search(initial_state, h):
-    initial_node = Node(initial_state)
-    stack = [initial_node]
-    visited_nodes = []
+def greedySearch(initialState, h):
+    initialNode = Node(initialState)
+    stack = [initialNode]
+    visitedNodes = []
 
     while len(stack):
-        curr_node = stack.pop()
+        currNode = stack.pop()
 
-        if curr_node not in visited_nodes:
-            visited_nodes.append(curr_node)
+        if currNode not in visitedNodes:
+            visitedNodes.append(currNode)
 
-            if solution(curr_node):
-                print(curr_node.state.pos)
-                print(curr_node.state.lVisit)
-                print_board(curr_node.state.board)
-                return curr_node.getPath()
+            if solution(currNode):
+                print(currNode.state.pos)
+                print(currNode.state.lVisit)
+                printBoard(currNode.state.board)
+                return currNode.getPath()
             
-            new_nodes = curr_node.operationsMaze()
-            for node in new_nodes:
+            newNodes = currNode.operationsMaze()
+            for node in newNodes:
                 stack.append(node)
             stack.sort(key=h)
 
@@ -255,7 +255,7 @@ def uniform(initialState, cost):
         if solution(currNode):
             print(currNode.state.pos)
             print(currNode.state.lVisit)
-            print_board(currNode.state.board)
+            printBoard(currNode.state.board)
             return currNode.getPath()
         
         newNodes = currNode.operationsMaze()
@@ -278,7 +278,7 @@ def aStar(initialState, heuristic, cost):
         if solution(currNode):
             print(currNode.state.pos)
             print(currNode.state.lVisit)
-            print_board(currNode.state.board)
+            printBoard(currNode.state.board)
             return currNode.getPath()
 
         newNodes = currNode.operationsMaze()
@@ -290,11 +290,11 @@ def aStar(initialState, heuristic, cost):
     return []
 
 # Iterative deepening
-def iterative_deepening(initial_state):
+def iterativeDeepening(initialState):
     path = []
     depth = 0
     while(len(path) == 0):
-        path = dfs(initial_state, depth)
+        path = dfs(initialState, depth)
         depth += 1
     
     print("Depth:", end=" ")
@@ -306,9 +306,9 @@ def iterative_deepening(initial_state):
 # HEURISTIC FUNCTIONS
 
 def heuristic1(node):
-    curr_pos = node.state.pos
-    target_pos = (0, len(node.state.board) - 1)
-    return manhattan_distance(curr_pos, target_pos)
+    currPos = node.state.pos
+    targetPos = (0, len(node.state.board) - 1)
+    return manhattanDistance(currPos, targetPos)
 
 # Number of L's to visit
 def heuristic2(node):
@@ -316,17 +316,11 @@ def heuristic2(node):
 
 # Manhatten Distance - Number of L's already visited
 def heuristic3(node):
-    m_h = heuristic1(node)
+    mH = heuristic1(node)
 
-    '''v = 0
-    for l in node.state.board:
-        for i in l:
-            if(i > v): v = i
-    
-    total_l = v - 1'''
-    visited_l = State.numberL - len(node.state.lVisit)
+    visitedL = State.numberL - len(node.state.lVisit)
 
-    return m_h - visited_l
+    return mH - visitedL
 
 # END HEURISTIC FUNCTIONS
 
@@ -350,61 +344,61 @@ def finalBoard(state):
     return False
 
 # Prints the 'board' provided
-def print_board(board):
+def printBoard(board):
     for row in board: 
         for piece in row:
             print(piece, end = " ")
         print()
 
-def manhattan_distance(Pos1, Pos2):
+def manhattanDistance(Pos1, Pos2):
     return abs(Pos1[0] - Pos2[0]) + abs(Pos1[1] - Pos2[1])
 
-def compare_algorithms(initial_state):
+def compareAlgorithms(initialState):
     #bfs
     start = time.time()
-    bfs(initial_state)
+    bfs(initialState)
     end = time.time()
     print("BFS:", end=" ")
     print(end - start)
 
     #dfs
     start = time.time()
-    dfs(initial_state)
+    dfs(initialState)
     end = time.time()
     print("DFS:", end=" ")
     print(end - start)
 
-    #iterative_deepening
+    #iterative deepening
     start = time.time()
-    iterative_deepening(initial_state)
+    iterativeDeepening(initialState)
     end = time.time()
     print("Iterative Deepening:", end=" ")
     print(end - start)
 
     #uniform cost
     start = time.time()
-    uniform(initial_state, cost1)
+    uniform(initialState, cost1)
     end = time.time()
     print("Uniform Cost:", end=" ")
     print(end - start)
     
     #greedy search
     start = time.time()
-    greedy_search(initial_state, heuristic1)
+    greedySearch(initialState, heuristic1)
     end = time.time()
     print("Greedy Search:", end=" ")
     print(end - start)
     
     #A*
     start = time.time()
-    aStar(initial_state, heuristic1, cost1)
+    aStar(initialState, heuristic1, cost1)
     end = time.time()
     print("A*:", end=" ")
     print(end - start)
 
 # FIM DAS FUNÇÕES AUXILIARES
 
-def initialize_board(board):
+def initializeBoard(board):
     Pos = ()
     LVisit = set()
     for i in range(len(board)):
@@ -423,4 +417,7 @@ if __name__ == "__main__":
     boards = json.load(f)
     f.close()
 
-    initial_state = initialize_board(boards[0])
+    state = initializeBoard(boards[1])
+    print("init:", end=" ")
+    print(state.lVisit)
+    compareAlgorithms(state)
