@@ -144,7 +144,7 @@ class Node:
                 if(new_node not in q_res):
                     q_res.append(new_node)
 
-        return q_res[::-1]
+        return q_res
 
     def getPath(self):
         path = [self.state.pos]
@@ -169,8 +169,16 @@ def dfs(initial_state, limit_depth = sys.maxsize):
 
     while len(stack) > 0:
         curr_node = stack.pop()
+        
+        visit = False
+        # Iterative Deepening - Visit nodes already visited when they're further up in the tree
+        if(limit_depth != sys.maxsize):
+            equals = [x for x in visited_nodes if x == curr_node]
+            for node in equals:
+                if(node.depth < curr_node.depth):
+                    visit = True
 
-        if curr_node not in visited_nodes:
+        if ((curr_node not in visited_nodes) or visit):
             visited_nodes.append(curr_node)
 
             if(solution(curr_node)):
@@ -181,7 +189,7 @@ def dfs(initial_state, limit_depth = sys.maxsize):
 
             if(curr_node.depth <= limit_depth):
                 new_nodes = curr_node.operationsMaze()
-                for node in new_nodes:
+                for node in new_nodes[::-1]:
                     stack.append(node)
     
     return []
@@ -261,6 +269,8 @@ def iterative_deepening(initial_state):
     path = []
     depth = 0
     while(len(path) == 0):
+        print("ID:", end=" ")
+        print(depth)
         path = dfs(initial_state, depth)
         depth += 1
     
@@ -373,9 +383,10 @@ if __name__ == "__main__":
     boards = json.load(f)
     f.close()
 
-    state = initialize_board(boards[0])
-    print("init:", end=" ")
+    state = initialize_board(boards[-1])
+    '''print("init:", end=" ")
     print(state.lVisit)
-    compare_algorithms(state)
-
+    compare_algorithms(state)'''
+    path = iterative_deepening(state)
+    print(path)
     
