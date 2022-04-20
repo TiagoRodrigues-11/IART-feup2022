@@ -144,7 +144,7 @@ class Node:
                 if(new_node not in q_res):
                     q_res.append(new_node)
 
-        return q_res[::-1]
+        return q_res
 
     def getPath(self):
         path = [self.state.pos]
@@ -169,8 +169,16 @@ def dfs(initial_state, limit_depth = sys.maxsize):
 
     while len(stack) > 0:
         curr_node = stack.pop()
+        
+        visit = False
+        # Iterative Deepening - Visit nodes already visited when they're further up in the tree
+        if(limit_depth != sys.maxsize):
+            equals = [x for x in visited_nodes if x == curr_node]
+            for node in equals:
+                if(node.depth < curr_node.depth):
+                    visit = True
 
-        if curr_node not in visited_nodes:
+        if ((curr_node not in visited_nodes) or visit):
             visited_nodes.append(curr_node)
 
             if solution(curr_node):
@@ -181,7 +189,7 @@ def dfs(initial_state, limit_depth = sys.maxsize):
 
             if curr_node.depth <= limit_depth:
                 new_nodes = curr_node.operationsMaze()
-                for node in new_nodes:
+                for node in new_nodes[::-1]:
                     stack.append(node)
     
     return []
@@ -300,6 +308,24 @@ def heuristic1(node):
     target_pos = (0, len(node.state.board) - 1)
     return manhattan_distance(curr_pos, target_pos)
 
+# Number of L's to visit
+def heuristic2(node):
+    return len(node.state.lVisit)
+
+# Manhatten Distance - Number of L's already visited
+def heuristic3(node):
+    m_h = heuristic1(node)
+
+    v = 0
+    for l in node.state.board:
+        for i in l:
+            if(i > v): v = i
+    
+    total_l = v - 1
+    visited_l = total_l - len(node.state.lVisit)
+
+    return m_h - visited_l
+
 # END HEURISTIC FUNCTIONS
 
 # INICIO DAS FUNÇÕES AUXILIARES # 
@@ -394,9 +420,7 @@ if __name__ == "__main__":
     boards = json.load(f)
     f.close()
 
-    state = initialize_board(boards[0])
+    state = initialize_board(boards[1])
     print("init:", end=" ")
     print(state.lVisit)
     compare_algorithms(state)
-
-    
