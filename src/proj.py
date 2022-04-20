@@ -173,13 +173,13 @@ def dfs(initial_state, limit_depth = sys.maxsize):
         if curr_node not in visited_nodes:
             visited_nodes.append(curr_node)
 
-            if(solution(curr_node)):
+            if solution(curr_node):
                 print(curr_node.state.pos)
                 print(curr_node.state.lVisit)
                 print_board(curr_node.state.board)
                 return curr_node.getPath()
 
-            if(curr_node.depth <= limit_depth):
+            if curr_node.depth <= limit_depth:
                 new_nodes = curr_node.operationsMaze()
                 for node in new_nodes:
                     stack.append(node)
@@ -196,7 +196,7 @@ def bfs(initial_state):
         curr_node = queue.pop(0)
         visited_nodes.append(curr_node)
         
-        if(solution(curr_node)):
+        if solution(curr_node):
             print(curr_node.state.pos)
             print(curr_node.state.lVisit)
             print_board(curr_node.state.board)
@@ -220,26 +220,25 @@ def greedy_search(initial_state, h):
         if curr_node not in visited_nodes:
             visited_nodes.append(curr_node)
 
-            if(solution(curr_node)):
+            if solution(curr_node):
                 print(curr_node.state.pos)
                 print(curr_node.state.lVisit)
                 print_board(curr_node.state.board)
                 return curr_node.getPath()
             
             new_nodes = curr_node.operationsMaze()
-            new_nodes.sort(reverse=True, key=h)
             for node in new_nodes:
                 stack.append(node)
+            stack.sort(key=h)
 
     return []
 
-def uniform(initialState):
+def uniform(initialState, cost):
     initialNode = Node(initialState)
-    queue = [(initialNode, 0)]
+    queue = [(initialNode, 0)]  # (Node, Cost)
     visitedNodes = []
 
     while len(queue):
-        queue.sort(key=lambda tup: tup[1])
         (currNode, currCost) = queue.pop(0)
 
         visitedNodes.append(currNode)
@@ -253,7 +252,31 @@ def uniform(initialState):
         for node in newNodes:
             if node not in visitedNodes:
                 queue.append((node, currCost + cost()))
+        queue.sort(key=lambda tup: tup[1])
     
+    return []
+
+def aStar(initialState, heuristic, cost):
+    initialNode = Node(initialState)
+    queue = [(initialNode, 0)] # (Node, cost)
+    visitedNodes = []
+
+    while len(queue):
+        (currNode, currCost) = queue.pop(0)
+        visitedNodes.append(currNode)
+
+        if solution(currNode):
+            print(currNode.state.pos)
+            print(currNode.state.lVisit)
+            print_board(currNode.state.board)
+            return currNode.getPath()
+
+        newNodes = currNode.operationsMaze()
+        for node in newNodes:
+            if node not in visitedNodes:
+                queue.append((node, currCost + cost()))
+        queue.sort(key=lambda tup: tup[1] + heuristic(tup[0]))
+
     return []
 
 # Iterative deepening
@@ -272,7 +295,7 @@ def iterative_deepening(initial_state):
 
 # HEURISTIC FUNCTIONS
 
-def h_1(node):
+def heuristic1(node):
     curr_pos = node.state.pos
     target_pos = (0, len(node.state.board) - 1)
     return manhattan_distance(curr_pos, target_pos)
@@ -290,7 +313,7 @@ def solution(node):
                     return True
     return False
 
-def cost():
+def cost1():
     return 1
 
 # finalBoard
@@ -332,26 +355,24 @@ def compare_algorithms(initial_state):
 
     #uniform cost
     start = time.time()
-    uniform(initial_state)
+    uniform(initial_state, cost1)
     end = time.time()
     print("Uniform Cost:", end=" ")
     print(end - start)
     
     #greedy search
     start = time.time()
-    greedy_search(initial_state, h_1)
+    greedy_search(initial_state, heuristic1)
     end = time.time()
     print("Greedy Search:", end=" ")
     print(end - start)
     
-    '''
     #A*
     start = time.time()
-    bfs(initial_state)
+    aStar(initial_state, heuristic1, cost1)
     end = time.time()
     print("A*:", end=" ")
     print(end - start)
-    '''
 
 # FIM DAS FUNÇÕES AUXILIARES
 
