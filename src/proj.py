@@ -115,20 +115,34 @@ class State:
         self.pos = pos                  # Tuple
         self.lVisit = lVisit            # Lista
 
+    def __eq__(self, other):
+        if(other == None): return False
+        if(self.board != other.board): return False
+        elif(self.pos != other.pos): return False
+        elif(self.lVisit != other.lVisit): return False
+        else: return True
+
 class Node:
     def __init__(self, state, parent = None, depth=0):
         self.state = state
         self.parent = parent
         self.depth = depth
-    
+
+    def __eq__(self, other):
+        if(other == None): return False
+        if(self.state == other.state): return True
+        else: return False
+
     # operationsMaze -> Determina novos estados a partir do estado atual e operadores dados
-    def operationsMaze(self):
+    def operationsMaze(node):
         operators = [down, downL, up, upL, left, leftL, right, rightL]
         q_res = []
         for op in operators:
-            new_state = op(self.state)
-            if((new_state not in q_res) and (new_state != None)):
-                q_res.append(Node(new_state, self, self.depth + 1))
+            new_state = op(node.state)
+            if(new_state != None):
+                new_node = Node(new_state, node, node.depth + 1)
+                if(new_node not in q_res):
+                    q_res.append(new_node)
 
         return q_res[::-1]
 
@@ -142,7 +156,6 @@ class Node:
         
         path.reverse()
         return path
-    
 
 # FIM DA CLASS NODE
 # INICIO DE ALGORITMOS # 
@@ -323,7 +336,6 @@ def compare_algorithms(initial_state):
     end = time.time()
     print("Uniform Cost:", end=" ")
     print(end - start)
-
     
     #greedy search
     start = time.time()
@@ -332,7 +344,6 @@ def compare_algorithms(initial_state):
     print("Greedy Search:", end=" ")
     print(end - start)
     
-
     '''
     #A*
     start = time.time()
@@ -358,14 +369,13 @@ def initialize_board(board):
     
 
 if __name__ == "__main__":
-
     f = open('./boards.json')
     boards = json.load(f)
     f.close()
-
 
     state = initialize_board(boards[0])
     print("init:", end=" ")
     print(state.lVisit)
     compare_algorithms(state)
+
     
