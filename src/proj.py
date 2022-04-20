@@ -110,6 +110,8 @@ def rightL(state):
 # INICIO DA CLASS NODE
 
 class State:
+    numberL = 0
+
     def __init__(self, board, pos, lVisit):
         self.board = board              # Array de Array
         self.pos = pos                  # Tuple
@@ -316,13 +318,13 @@ def heuristic2(node):
 def heuristic3(node):
     m_h = heuristic1(node)
 
-    v = 0
+    '''v = 0
     for l in node.state.board:
         for i in l:
             if(i > v): v = i
     
-    total_l = v - 1
-    visited_l = total_l - len(node.state.lVisit)
+    total_l = v - 1'''
+    visited_l = State.numberL - len(node.state.lVisit)
 
     return m_h - visited_l
 
@@ -412,6 +414,7 @@ def initialize_board(board):
             elif not (board[i][j] == 0) and not (board[i][j] in LVisit):
                 LVisit.add(board[i][j])
     state = State(board, Pos, LVisit)
+    State.numberL = len(LVisit)
     return state
     
 
@@ -420,7 +423,4 @@ if __name__ == "__main__":
     boards = json.load(f)
     f.close()
 
-    state = initialize_board(boards[1])
-    print("init:", end=" ")
-    print(state.lVisit)
-    compare_algorithms(state)
+    initial_state = initialize_board(boards[0])
