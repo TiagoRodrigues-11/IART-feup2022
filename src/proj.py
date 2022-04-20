@@ -282,10 +282,29 @@ def iterative_deepening(initial_state):
 
 # HEURISTIC FUNCTIONS
 
+# Manhatten Distance
 def h_1(node):
     curr_pos = node.state.pos
     target_pos = (0, len(node.state.board) - 1)
     return manhattan_distance(curr_pos, target_pos)
+
+# Number of L's to visit
+def h_2(node):
+    return len(node.state.lVisit)
+
+# Manhatten Distance - Number of L's already visited
+def h_3(node):
+    m_h = h_1(node)
+
+    v = 0
+    for l in node.state.board:
+        for i in l:
+            if(i > v): v = i
+    
+    total_l = v - 1
+    visited_l = total_l - len(node.state.lVisit)
+
+    return m_h - visited_l
 
 # END HEURISTIC FUNCTIONS
 
