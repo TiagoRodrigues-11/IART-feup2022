@@ -110,6 +110,8 @@ def rightL(state):
 # INICIO DA CLASS NODE
 
 class State:
+    numberL = 0
+
     def __init__(self, board, pos, lVisit):
         self.board = board              # Array de Array
         self.pos = pos                  # Tuple
@@ -305,13 +307,7 @@ def heuristic2(node):
 def heuristic3(node):
     mH = heuristic1(node)
 
-    v = 0
-    for l in node.state.board:
-        for i in l:
-            if(i > v): v = i
-    
-    totalL = v - 1
-    visitedL = totalL - len(node.state.lVisit)
+    visitedL = State.numberL - len(node.state.lVisit)
 
     return mH - visitedL
 
@@ -418,6 +414,7 @@ def initializeBoard(board):
             elif not (board[i][j] == 0) and not (board[i][j] in LVisit):
                 LVisit.add(board[i][j])
     state = State(board, Pos, LVisit)
+    State.numberL = len(LVisit)
     return state
     
 
