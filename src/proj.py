@@ -160,7 +160,6 @@ class Node:
 # FIM DA CLASS NODE
 # INICIO DE ALGORITMOS # 
 
-# Probably wrong
 # Depth-First Search
 def dfs(initialState, limitDepth = sys.maxsize):
     initialNode = Node(initialState)
@@ -182,9 +181,7 @@ def dfs(initialState, limitDepth = sys.maxsize):
             visitedNodes.append(currNode)
 
             if solution(currNode):
-                print(currNode.state.pos)
-                print(currNode.state.lVisit)
-                printBoard(currNode.state.board)
+                finalResults(currNode.state)
                 return currNode.getPath()
 
             if currNode.depth <= limitDepth:
@@ -205,9 +202,7 @@ def bfs(initialState):
         visitedNodes.append(currNode)
         
         if solution(currNode):
-            print(currNode.state.pos)
-            print(currNode.state.lVisit)
-            printBoard(currNode.state.board)
+            finalResults(currNode.state)
             return currNode.getPath()
 
         newNodes = currNode.operationsMaze()
@@ -229,9 +224,7 @@ def greedySearch(initialState, h):
             visitedNodes.append(currNode)
 
             if solution(currNode):
-                print(currNode.state.pos)
-                print(currNode.state.lVisit)
-                printBoard(currNode.state.board)
+                finalResults(currNode.state)
                 return currNode.getPath()
             
             newNodes = currNode.operationsMaze()
@@ -251,9 +244,7 @@ def uniform(initialState, cost):
 
         visitedNodes.append(currNode)
         if solution(currNode):
-            print(currNode.state.pos)
-            print(currNode.state.lVisit)
-            printBoard(currNode.state.board)
+            finalResults(currNode.state)
             return currNode.getPath()
         
         newNodes = currNode.operationsMaze()
@@ -274,9 +265,7 @@ def aStar(initialState, heuristic, cost):
         visitedNodes.append(currNode)
 
         if solution(currNode):
-            print(currNode.state.pos)
-            print(currNode.state.lVisit)
-            printBoard(currNode.state.board)
+            finalResults(currNode.state)
             return currNode.getPath()
 
         newNodes = currNode.operationsMaze()
@@ -312,7 +301,7 @@ def heuristic1(node):
 def heuristic2(node):
     return len(node.state.lVisit)
 
-# Manhatten Distance - Number of L's already visited
+# Manhattan Distance - Number of L's already visited
 def heuristic3(node):
     mH = heuristic1(node)
 
@@ -400,7 +389,24 @@ def compareAlgorithms(initialState):
     print("A*:", end=" ")
     print(end - start)
 
+def compareHeuristics(initialState):
+    print("Greedy Search:")
+    heuristics = [heuristic1, heuristic2, heuristic3]
+
+    for heur in heuristics:
+        start = time.time()
+        greedySearch(initialState, heur)
+        end = time.time()
+        print("\t", end - start)
+
+
+
 # FIM DAS FUNÇÕES AUXILIARES
+
+def finalResults(state):
+    print(state.pos)
+    print(state.lVisit)
+    printBoard(state.board)
 
 def initializeBoard(board):
     Pos = ()
@@ -423,4 +429,4 @@ if __name__ == "__main__":
     state = initializeBoard(boards[1])
     print("init:", end=" ")
     print(state.lVisit)
-    compareAlgorithms(state)
+    compareHeuristics(state)
