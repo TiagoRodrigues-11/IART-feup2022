@@ -1,4 +1,5 @@
 import copy
+import csv
 import json
 import sys
 import time
@@ -183,7 +184,7 @@ def dfs(initialState, limitDepth = sys.maxsize):
             visitedNodes.append(currNode)
 
             if solution(currNode):
-                finalResults(currNode.state)
+                #finalResults(currNode.state)
                 return currNode.getPath()
 
             if currNode.depth <= limitDepth:
@@ -204,7 +205,7 @@ def bfs(initialState):
         visitedNodes.append(currNode)
         
         if solution(currNode):
-            finalResults(currNode.state)
+            #finalResults(currNode.state)
             return currNode.getPath()
 
         newNodes = currNode.operationsMaze()
@@ -226,7 +227,7 @@ def greedySearch(initialState, h):
             visitedNodes.append(currNode)
 
             if solution(currNode):
-                finalResults(currNode.state)
+                #finalResults(currNode.state)
                 return currNode.getPath()
             
             newNodes = currNode.operationsMaze()
@@ -246,7 +247,7 @@ def uniform(initialState, cost):
 
         visitedNodes.append(currNode)
         if solution(currNode):
-            finalResults(currNode.state)
+            #finalResults(currNode.state)
             return currNode.getPath()
         
         newNodes = currNode.operationsMaze()
@@ -267,7 +268,7 @@ def aStar(initialState, heuristic, cost):
         visitedNodes.append(currNode)
 
         if solution(currNode):
-            finalResults(currNode.state)
+            #finalResults(currNode.state)
             return currNode.getPath()
 
         newNodes = currNode.operationsMaze()
@@ -342,59 +343,96 @@ def printBoard(board):
 def manhattanDistance(Pos1, Pos2):
     return abs(Pos1[0] - Pos2[0]) + abs(Pos1[1] - Pos2[1])
 
-def compareAlgorithms(initialState):
-    #bfs
-    start = time.time()
-    bfs(initialState)
-    end = time.time()
-    print("BFS:", end=" ")
-    print(end - start)
-
-    #dfs
-    start = time.time()
-    dfs(initialState)
-    end = time.time()
-    print("DFS:", end=" ")
-    print(end - start)
-
-    #iterative deepening
-    start = time.time()
-    iterativeDeepening(initialState)
-    end = time.time()
-    print("Iterative Deepening:", end=" ")
-    print(end - start)
-
-    #uniform cost
-    start = time.time()
-    uniform(initialState, cost1)
-    end = time.time()
-    print("Uniform Cost:", end=" ")
-    print(end - start)
+def compareAlgorithms(states):
+    f = open("./algorithms.csv", 'w', newline='')
     
-    #greedy search
-    start = time.time()
-    greedySearch(initialState, heuristic1)
-    end = time.time()
-    print("Greedy Search:", end=" ")
-    print(end - start)
-    
-    #A*
-    start = time.time()
-    aStar(initialState, heuristic1, cost1)
-    end = time.time()
-    print("A*:", end=" ")
-    print(end - start)
+    writer = csv.writer(f, delimiter = ";")
 
-def compareHeuristics(initialState):
-    print("Greedy Search:")
+
+    headers = ["", "Time6x6", "Time7x7", "Time8x8", "Time9x9"]
+    functions = [bfs, dfs, iterativeDeepening]
+    writer.writerow(headers)
+
+    for function in functions:
+        values = [function.__name__]
+        for state in states:
+            start = time.time()
+            function(state)
+            end = time.time()
+            values.append(end-start)
+            print(function.__name__, ": ", end - start)
+        writer.writerow(values)
+
+    values = ["uniform"]
+    for state in states:
+        start = time.time()
+        uniform(state, cost1)
+        end = time.time()
+        values.append(end-start)
+        print("uniform: ", end - start)
+    writer.writerow(values)
+
+    values = ["greedySearch"]
+    for state in states:
+        start = time.time()
+        greedySearch(state, heuristic3)
+        end = time.time()
+        values.append(end-start)
+        print("greedySearch: ", end - start)
+    writer.writerow(values)
+
+    values = ["aStar"]
+    for state in states:
+        start = time.time()
+        aStar(state, heuristic3, cost1)
+        end = time.time()
+        values.append(end-start)
+        print("aStar: ", end - start)
+    writer.writerow(values)
+
+
+def compareHeuristics(states):
     heuristics = [heuristic1, heuristic2, heuristic3]
 
-    for heur in heuristics:
-        start = time.time()
-        greedySearch(initialState, heur)
-        end = time.time()
-        print("\t", end - start)
+    fGreedy = open("./greedy_search.csv", 'w', newline='')
+    fAStar = open("./a_star.csv", 'w', newline='')
 
+    writerG = csv.writer(fGreedy, delimiter = ";")
+    writerA = csv.writer(fAStar, delimiter = ";")
+
+    headers = ["", "Time6x6", "Time7x7", "Time8x8", "Time9x9"]
+    writerG.writerow(headers)
+    
+    print("Greedy Search:")
+    for heur in heuristics:
+        values = [heur.__name__]
+
+        for state in states:
+            start = time.time()
+            greedySearch(state, heur)
+            end = time.time()
+            values.append(end-start)
+            print("\t" + heur.__name__ + ": ", end - start)
+
+        writerG.writerow(values)
+
+
+    writerA.writerow(headers)
+    print("A* Search:")
+
+    for heur in heuristics:
+        values = [heur.__name__]
+
+        for state in states:
+            start = time.time()
+            aStar(state, heur, cost1)
+            end = time.time()
+            values.append(end-start)
+            print("\t" + heur.__name__ + ": ", end - start)
+
+        writerA.writerow(values)
+
+    
 
 
 # FIM DAS FUNÇÕES AUXILIARES
@@ -423,7 +461,12 @@ if __name__ == "__main__":
     boards = json.load(f)
     f.close()
 
-    state = initializeBoard(boards[1])
+    state1 = initializeBoard(boards[1])
+    state2 = initializeBoard(boards[7])
+    state3 = initializeBoard(boards[12])
+    state4 = initializeBoard(boards[16])
+
+    states = [state1, state2, state3, state4]
+
     print("init:", end=" ")
-    print(state.lVisit)
-    compareHeuristics(state)
+    compareAlgorithms(states)
