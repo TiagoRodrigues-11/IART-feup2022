@@ -439,8 +439,9 @@ def compareHeuristics(states):
 # FIM DAS FUNÇÕES AUXILIARES
 
 def finalResults(state):
-    print('Final position ', state.pos)
-    print('L\'s to visit', state.lVisit)
+    print('\n\n')
+    print('Final position: ', state.pos)
+    print('L\'s to visit: ', state.lVisit)
     printBoard(state.board)
 
 def initializeBoard(board):
