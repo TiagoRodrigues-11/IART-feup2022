@@ -184,7 +184,7 @@ def dfs(initialState, limitDepth = sys.maxsize):
             visitedNodes.append(currNode)
 
             if solution(currNode):
-                #finalResults(currNode.state)
+                finalResults(currNode.state)
                 return currNode.getPath()
 
             if currNode.depth <= limitDepth:
@@ -205,7 +205,7 @@ def bfs(initialState):
         visitedNodes.append(currNode)
         
         if solution(currNode):
-            #finalResults(currNode.state)
+            finalResults(currNode.state)
             return currNode.getPath()
 
         newNodes = currNode.operationsMaze()
@@ -227,7 +227,7 @@ def greedySearch(initialState, h):
             visitedNodes.append(currNode)
 
             if solution(currNode):
-                #finalResults(currNode.state)
+                finalResults(currNode.state)
                 return currNode.getPath()
             
             newNodes = currNode.operationsMaze()
@@ -247,7 +247,7 @@ def uniform(initialState, cost):
 
         visitedNodes.append(currNode)
         if solution(currNode):
-            #finalResults(currNode.state)
+            finalResults(currNode.state)
             return currNode.getPath()
         
         newNodes = currNode.operationsMaze()
@@ -268,7 +268,7 @@ def aStar(initialState, heuristic, cost):
         visitedNodes.append(currNode)
 
         if solution(currNode):
-            #finalResults(currNode.state)
+            finalResults(currNode.state)
             return currNode.getPath()
 
         newNodes = currNode.operationsMaze()
@@ -335,10 +335,11 @@ def finalBoard(state):
 
 # Prints the 'board' provided
 def printBoard(board):
+    print('Board:')
     for row in board: 
         for piece in row:
-            print(piece, end = " ")
-        print()
+            print(piece, end = "\t")
+        print('\n\n')
 
 def manhattanDistance(Pos1, Pos2):
     return abs(Pos1[0] - Pos2[0]) + abs(Pos1[1] - Pos2[1])
@@ -438,8 +439,8 @@ def compareHeuristics(states):
 # FIM DAS FUNÇÕES AUXILIARES
 
 def finalResults(state):
-    print(state.pos)
-    print(state.lVisit)
+    print('Final position ', state.pos)
+    print('L\'s to visit', state.lVisit)
     printBoard(state.board)
 
 def initializeBoard(board):
@@ -461,12 +462,53 @@ if __name__ == "__main__":
     boards = json.load(f)
     f.close()
 
-    state1 = initializeBoard(boards[1])
-    state2 = initializeBoard(boards[7])
-    state3 = initializeBoard(boards[12])
-    state4 = initializeBoard(boards[16])
+    option = 0
 
-    states = [state1, state2, state3, state4]
+    searchMethods = [dfs, bfs, uniform, iterativeDeepening, greedySearch, aStar]
 
-    print("init:", end=" ")
-    compareAlgorithms(states)
+    heuristics = [heuristic1, heuristic2, heuristic3]
+
+    while True:
+        print('Please choose which algorithm you\'d like to use')
+        print('0 - Leave apllication')
+        print('1 - Depth-First Search')
+        print('2 - Breadth-First Search')
+        print('3 - Uniform Cost Search')
+        print('4 - Iteartive Deepening')
+        print('5 - Greedy Search')
+        print('6 - A* Search')
+        option = input('Input number: ')
+
+        option = int(option)
+
+        if option == 0:
+            break
+        else:
+            func = searchMethods[option - 1]
+
+        if option > 4:
+            print('Please choose which heuristic you\'d like to use')
+            print('0 - Manhattan Distance')
+            print('1 - Number of Unvisited L\'s')
+            print('2 - Manhattan Distance minus Visited L\'s')
+            option = input('Input number: ')
+            option = int(option)
+
+            heur = heuristics[option]
+
+        option = input('Please choose which board you\'d like to use (1-19) ')
+        option = int(option)
+
+        board = boards[option]
+
+        if func != greedySearch and func != aStar:
+            print('Path: ', func(initializeBoard(board)))
+        elif func == greedySearch:
+            print('Path: ', greedySearch(initializeBoard(board), heur))
+        else:
+            print('Path: ', aStar(initializeBoard(board), heur, cost1))
+
+        print()
+
+
+        
