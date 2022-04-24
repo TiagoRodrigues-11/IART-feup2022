@@ -3,7 +3,6 @@ import csv
 import json
 import sys
 import time
-from colorama import Fore
 
 # INICIO DE OPERADORES #
 
@@ -339,13 +338,6 @@ def printBoard(board):
     print('Board:')
     for row in board: 
         for piece in row:
-            if piece == 1:
-                print(Fore.RED, piece, end='\t')
-                print(Fore.WHITE, end='')
-            elif piece != 0:
-                print(Fore.GREEN, piece, end='\t')
-                print(Fore.WHITE, end='')
-            else:
                 print(piece, end = '\t')
         print('\n\n') 
 
