@@ -3,6 +3,7 @@ import csv
 import json
 import sys
 import time
+from colorama import Fore
 
 # INICIO DE OPERADORES #
 
@@ -338,8 +339,15 @@ def printBoard(board):
     print('Board:')
     for row in board: 
         for piece in row:
-            print(piece, end = "\t")
-        print('\n\n')
+            if piece == 1:
+                print(Fore.RED, piece, end='\t')
+                print(Fore.WHITE, end='')
+            elif piece != 0:
+                print(Fore.GREEN, piece, end='\t')
+                print(Fore.WHITE, end='')
+            else:
+                print(piece, end = '\t')
+        print('\n\n') 
 
 def manhattanDistance(Pos1, Pos2):
     return abs(Pos1[0] - Pos2[0]) + abs(Pos1[1] - Pos2[1])
@@ -441,7 +449,6 @@ def compareHeuristics(states):
 def finalResults(state):
     print('\n\n')
     print('Final position: ', state.pos)
-    print('L\'s to visit: ', state.lVisit)
     printBoard(state.board)
 
 def initializeBoard(board):
@@ -497,7 +504,7 @@ if __name__ == "__main__":
 
             heur = heuristics[option]
 
-        option = input('Please choose which board you\'d like to use (1-19) ')
+        option = input('Please choose which board you\'d like to use (0-18) ')
         option = int(option)
 
         board = boards[option]
