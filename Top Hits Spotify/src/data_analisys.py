@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sb
-
+from sklearn import preprocessing
 
 ''' 
  Reading data into a pandas DataFrame
@@ -9,9 +9,44 @@ import seaborn as sb
     - For some reason, i can't see any data
 '''
 
-top_hits = pd.read_csv('..\docs\songs_normalize.csv', na_values=['NA'])
-print(top_hits)
+# DATA PROCESSING
 
+top_hits = pd.read_csv('..\docs\songs_normalize.csv')
+
+# Check for null values - there are none
+null_values = top_hits.isnull().any().sum()
+print("Null values: ", null_values)
+
+# Remove rows with set() values in the genre column
+top_hits = top_hits[top_hits.genre != "set()"]
+
+# EXPLORATORY ANALYSIS
+
+# Create correlation heatmap for possible aggregation of columns
+le = preprocessing.LabelEncoder()
+le.fit(top_hits['popularity'])
+top_hits['popularity'] = le.transform(top_hits['popularity'])
+corr_matrix = top_hits.corr()
+
+plt.figure(figsize=(15,15))
+plt.title('Correlation Heatmap of Top Hits Dataset')
+a = sb.heatmap(corr_matrix, square=True, annot=True, fmt='.2f', linecolor='black')
+a.set_xticklabels(a.get_xticklabels(), rotation=30)
+a.set_yticklabels(a.get_yticklabels(), rotation=30)
+plt.show()
+# Since the hightest correlation between attributes (other than with itselves) is only 0.65, there will be no aggregation of columns
+
+
+# Remove non-numerical values and change explict column from true & false to 1 and 0 for scatter plot
+top_hits_scatter = top_hits
+for col in top_hits_scatter.columns:
+    if top_hits_scatter[col].dtype == "object":
+        top_hits_scatter = top_hits_scatter.drop(columns=[col], axis=1)
+    elif top_hits_scatter[col].dtype == "bool":
+        top_hits_scatter[col] = top_hits_scatter[col].astype(int)
+
+sb.pairplot(top_hits_scatter, hue='popularity')
+plt.savefig('new_new_pairplot.png')
 
 '''
 Varibles:
@@ -59,7 +94,16 @@ Varibles:
 # Pelo que percebi pairplot so funciona com 4 vars
 # Portanto pensar em que 4 vars usar 
 # Não entendi bem o que procurar se 'genre', se 'popularity'...
-sb.pairplot(top_hits.dropna(), hue='genre', vars=["popularity", "danceability", "instrumentalness", "speechiness"])
+
+# Hue acho que faz sentido ser 'popularity', 
+# pq acho que o queremos é que um algoritmo possa analizar uma música especifica e determinar se irá ser popular ou não
+
+# sb.pairplot(top_hits.dropna(), hue='genre', vars=["popularity", "danceability", "instrumentalness", "speechiness"])
+
+
+#sb.pairplot(top_hits.dropna(), hue='popularity')
+
+
 
 # Guarda o plot do pairplot
-plt.savefig('pairplot.png')
+#plt.savefig('new_pairplot.png')
